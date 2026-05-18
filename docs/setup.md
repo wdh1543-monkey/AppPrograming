@@ -30,6 +30,11 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
 
+설치 확인:
+```bash
+npx expo doctor
+```
+
 ---
 
 ## 2. 클론
