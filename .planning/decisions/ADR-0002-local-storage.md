@@ -10,7 +10,7 @@
 
 ## 고려한 대안
 
-### 대안 A: SQLite (sqflite / drift)
+### 대안 A: SQLite (expo-sqlite)
 - 장점: 구조화된 쿼리, 관계형 데이터에 적합, 무료 티어 없음
 - 단점: 기기 간 동기화 불가, 스키마 변경 시 마이그레이션 필요
 
@@ -28,14 +28,14 @@
 
 ## 결정
 
-**SQLite (sqflite 패키지)**를 선택한다.
+**SQLite (expo-sqlite 패키지)**를 선택한다.
 
 ## 이유
 
 - 운동 기록은 세션-세트-종목의 관계형 구조 → 관계형 DB가 적합
 - 백엔드 없이 완결되어 무료 티어 의존 위험 없음 (위험 #1 예방)
 - Won't에서 클라우드 동기화를 명시적으로 제외했으므로 Firebase 불필요
-- Flutter에서 sqflite는 사용 사례와 문서가 풍부
+- React Native (Expo)에서 expo-sqlite는 별도 설치 없이 기본 제공
 
 ## 결과
 
@@ -50,4 +50,4 @@
 ## 후속 작업
 
 - [ ] 스키마 설계: WorkoutSession, ExerciseSet, Exercise 테이블 (11주차)
-- [ ] sqflite 패키지 버전 확인 및 pubspec.yaml 추가
+- [ ] expo-sqlite 사용법 확인 및 database.ts 작성
