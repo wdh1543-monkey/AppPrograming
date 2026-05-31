@@ -40,8 +40,8 @@ npx expo doctor
 ## 2. 클론
 
 ```bash
-git clone https://github.com/[본인계정]/workout_ai.git
-cd workout_ai
+git clone https://github.com/wdh1543-monkey/AppPrograming.git
+cd AppPrograming/workout_ai
 ```
 
 ---
