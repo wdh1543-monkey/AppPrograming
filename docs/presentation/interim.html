@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>workout_ai — 중간 발표</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* ── Slide layout ── */
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 56px 80px;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .slide.active { display: flex; }
+
+    /* ── Title slide ── */
+    .slide.title {
+      background: radial-gradient(ellipse at 30% 40%, #1e1b4b 0%, #0f172a 60%),
+                  radial-gradient(ellipse at 80% 70%, #1a2e5c 0%, transparent 60%);
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+    }
+    .slide.title h1 {
+      font-size: 4em;
+      color: #93c5fd;
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 60px rgba(96,165,250,0.45);
+      line-height: 1;
+    }
+    .slide.title .tagline {
+      font-size: 1.4em;
+      color: #fbbf24;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .slide.title .sub {
+      font-size: 1em;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .pill {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: 0.85em;
+      margin-top: 8px;
+    }
+
+    /* ── Content slides ── */
+    h2 {
+      font-size: 1.55em;
+      color: #a78bfa;
+      border-bottom: 2px solid #4c1d95;
+      padding-bottom: 0.35em;
+      margin-bottom: 0.7em;
+      flex-shrink: 0;
+    }
+
+    /* ── Table ── */
+    table { border-collapse: collapse; width: 100%; font-size: 0.88em; }
+    th {
+      background: #1e3a8a;
+      color: #bfdbfe;
+      padding: 10px 18px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.85em;
+      letter-spacing: 0.04em;
+    }
+    td { border-bottom: 1px solid #1e293b; padding: 10px 18px; }
+    tr:nth-child(even) td { background: #1a2234; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Blockquote ── */
+    blockquote {
+      border-left: 4px solid #7c3aed;
+      background: #1e1b4b;
+      padding: 0.9em 1.4em;
+      border-radius: 0 10px 10px 0;
+      color: #c7d2fe;
+      font-size: 1.05em;
+      line-height: 1.6;
+      margin-top: 1em;
+      flex-shrink: 0;
+    }
+
+    /* ── Problem color ── */
+    .c-red    { color: #f87171; font-weight: 700; }
+    .c-orange { color: #fb923c; font-weight: 700; }
+    .c-yellow { color: #fbbf24; font-weight: 700; }
+
+    /* ── Architecture slide ── */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-top: 0.2em;
+    }
+    .mermaid { font-size: 1em; }
+
+    /* ── WBS badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.82em;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .done  { background: #064e3b; color: #6ee7b7; }
+    .wip   { background: #1c3461; color: #93c5fd; }
+    .todo  { background: #1e293b; color: #64748b; }
+
+    /* ── Progress bar ── */
+    .progress-wrap { margin-top: 1em; }
+    .progress-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+    .pct-big { font-size: 1.4em; font-weight: 800; color: #60a5fa; }
+    .pct-label { font-size: 0.85em; color: #64748b; }
+    .bar { background: #1e293b; border-radius: 999px; height: 8px; overflow: hidden; }
+    .fill { background: linear-gradient(90deg, #3b82f6, #7c3aed); height: 100%; border-radius: 999px; }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      bottom: 22px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+    }
+    .nav button {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 7px 16px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.85em;
+      transition: background 0.15s;
+    }
+    .nav button:hover { background: #334155; color: #e2e8f0; }
+    .slide-num { color: #475569; font-size: 0.8em; min-width: 36px; text-align: center; }
+
+    /* ── Dot indicators ── */
+    .dots {
+      position: fixed;
+      bottom: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #1e293b; border: 1px solid #334155; transition: background 0.2s; }
+    .dot.on { background: #7c3aed; border-color: #7c3aed; }
+
+    /* ── Slide number (top-right) ── */
+    .page-num {
+      position: fixed;
+      top: 20px;
+      right: 28px;
+      font-size: 0.75em;
+      color: #334155;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Slide 1 : Title -->
+<div class="slide title active">
+  <h1>workout_ai</h1>
+  <p class="tagline">AI 퍼스널 트레이너를 주머니에</p>
+  <p class="sub">원동현 &nbsp;·&nbsp; React Native (Expo) + Claude API</p>
+  <div>
+    <span class="pill">앱프로그래밍 2026 &nbsp;·&nbsp; 중간 발표</span>
+  </div>
+</div>
+
+<!-- Slide 2 : Problem -->
+<div class="slide">
+  <h2>문제 — 혼자 운동하는 중급자의 3가지 벽</h2>
+  <table>
+    <thead>
+      <tr><th>문제</th><th>상황</th><th>결과</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="c-red">계획이 흐트러진다</span></td>
+        <td>월요일에 세우고 수요일에 포기</td>
+        <td>루틴 없음</td>
+      </tr>
+      <tr>
+        <td><span class="c-orange">기록해도 의미 없다</span></td>
+        <td>쌓이지만 분석이 안 됨</td>
+        <td>성장 파악 불가</td>
+      </tr>
+      <tr>
+        <td><span class="c-yellow">혼자 조정 못 한다</span></td>
+        <td>PT 없이 무게·세트 수 결정 어려움</td>
+        <td>정체 또는 부상</td>
+      </tr>
+    </tbody>
+  </table>
+  <blockquote>
+    "대화 한 마디로 오늘 운동이 결정되고,&nbsp; 끝나면 기록이 분석된다."
+  </blockquote>
+</div>
+
+<!-- Slide 3 : Architecture -->
+<div class="slide">
+  <h2>아키텍처</h2>
+  <div class="arch-grid">
+    <div class="mermaid">
+flowchart TD
+  UI["화면\n(Expo Router)"]
+  ST["상태\n(Zustand)"]
+  SV["서비스\n(aiCoach · workout)"]
+  API["Claude API\n(Haiku)"]
+  DB["SQLite\n(expo-sqlite)"]
+
+  UI --> ST
+  ST --> SV
+  SV --> API
+  SV --> DB
+
+  style UI  fill:#1e3a8a,color:#bfdbfe,stroke:#3b82f6,stroke-width:2px
+  style ST  fill:#4c1d95,color:#ddd6fe,stroke:#7c3aed,stroke-width:2px
+  style SV  fill:#064e3b,color:#a7f3d0,stroke:#10b981,stroke-width:2px
+  style API fill:#7f1d1d,color:#fecaca,stroke:#ef4444,stroke-width:2px
+  style DB  fill:#713f12,color:#fef08a,stroke:#eab308,stroke-width:2px
+    </div>
+    <table>
+      <thead>
+        <tr><th>기술</th><th>선택 이유</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>React Native (Expo)</td><td>QR 즉시 실행, 빠른 프로토타입</td></tr>
+        <tr><td>Zustand</td><td>경량 상태관리, AI 코드 이해 쉬움</td></tr>
+        <tr><td>expo-sqlite</td><td>오프라인 기록 저장, 별도 서버 불필요</td></tr>
+        <tr><td>Claude Haiku</td><td>저비용 대화형 운동 코칭 최적</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Slide 4 : WBS -->
+<div class="slide">
+  <h2>WBS — 진행 현황</h2>
+  <table>
+    <thead>
+      <tr><th>주차</th><th>목표</th><th>상태</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>10주차</td>
+        <td>기획·일정 수립</td>
+        <td><span class="badge done">✅ 완료</span></td>
+      </tr>
+      <tr style="background:#1e1b4b; border-left:3px solid #7c3aed;">
+        <td style="background:#1e1b4b; border-left:3px solid #7c3aed;"><strong style="color:#c4b5fd">11주차 ← 현재</strong></td>
+        <td style="background:#1e1b4b;">설계·환경 구축</td>
+        <td style="background:#1e1b4b;"><span class="badge wip">🚧 진행 중</span></td>
+      </tr>
+      <tr>
+        <td>12주차</td>
+        <td>AI 채팅 + 운동 기록 저장</td>
+        <td><span class="badge todo">⏳ 예정</span></td>
+      </tr>
+      <tr>
+        <td>13주차</td>
+        <td>통계·피드백·루틴 재조정</td>
+        <td><span class="badge todo">⏳ 예정</span></td>
+      </tr>
+      <tr>
+        <td>14–15주차</td>
+        <td>배포·최종 발표</td>
+        <td><span class="badge todo">⏳ 예정</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span class="pct-big">25%</span>
+      <span class="pct-label">Must 기능 기준 — 기획·설계 문서 완료</span>
+    </div>
+    <div class="bar"><div class="fill" style="width:25%"></div></div>
+  </div>
+</div>
+
+<!-- Navigation UI -->
+<div class="page-num" id="page-num">1 / 4</div>
+
+<div class="dots" id="dots"></div>
+
+<div class="nav">
+  <button onclick="go(cur-1)">&#9664;</button>
+  <span class="slide-num" id="slide-num">1 / 4</span>
+  <button onclick="go(cur+1)">&#9654;</button>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'dark', flowchart: { curve: 'basis' } });
+
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const total = slides.length;
+  let cur = 0;
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  });
+
+  function go(n) {
+    if (n < 0 || n >= total) return;
+    slides[cur].classList.remove('active');
+    dotsEl.children[cur].classList.remove('on');
+    cur = n;
+    slides[cur].classList.add('active');
+    dotsEl.children[cur].classList.add('on');
+    const label = (cur + 1) + ' / ' + total;
+    document.getElementById('slide-num').textContent = label;
+    document.getElementById('page-num').textContent  = label;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft')                     go(cur - 1);
+    if (e.key === 'Home')                          go(0);
+    if (e.key === 'End')                           go(total - 1);
+  });
+
+  document.addEventListener('click', e => {
+    const ignore = e.target.closest('.nav') || e.target.closest('.dots');
+    if (!ignore) go(cur + 1);
+  });
+</script>
+</body>
+</html>
