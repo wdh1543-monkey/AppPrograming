@@ -1,30 +1,29 @@
 # 아키텍처 — workout_ai
 
-> 작성: AI Agent 자동 생성 / 본인 검토 완료 (2026-05-18)
-> 프레임워크: React Native (Expo) + TypeScript
+> 프레임워크: Flutter (Dart) / 변경: 2026-06-01 (React Native → Flutter)
 
 ## 전체 구조 다이어그램
 
 ```mermaid
 flowchart TD
   subgraph Presentation
-    UI[Screen / Component]
+    UI[Screen / Widget]
   end
   subgraph Application
-    ST[Zustand Store\nchatStore / workoutStore]
+    PR[Provider\nChatProvider / WorkoutProvider]
   end
   subgraph Domain
-    SV[Service\naiCoachService / workoutService]
+    SV[Service\nAiCoachService / WorkoutService]
     EN[Entity\nWorkoutSession / ExerciseSet]
   end
   subgraph Data
     REPO[Repository]
-    API[Claude API\nfetch]
-    DB[SQLite\nexpo-sqlite]
+    API[Claude API\nhttp 패키지]
+    DB[SQLite\nsqflite]
   end
 
-  UI --> ST
-  ST --> SV
+  UI --> PR
+  PR --> SV
   SV --> EN
   SV --> REPO
   REPO --> API
@@ -33,73 +32,76 @@ flowchart TD
 
 ## 레이어 설명
 
-| 레이어 | 역할 | 주요 파일 위치 |
+| 레이어 | 역할 | 주요 위치 |
 |---|---|---|
-| **Presentation** | 화면 렌더링, 사용자 입력 처리 | `app/`, `components/` |
-| **Application** | 상태관리, UI와 도메인 연결 | `store/` (Zustand) |
-| **Domain** | 핵심 비즈니스 규칙, 엔티티 정의 | `services/`, `domain/entities/` |
-| **Data** | 외부 데이터 접근 (Claude API, SQLite) | `data/api/`, `data/local/` |
+| **Presentation** | 화면 렌더링, 사용자 입력 | `lib/presentation/` |
+| **Application** | 상태관리, UI-도메인 연결 | `lib/application/` (Provider) |
+| **Domain** | 핵심 비즈니스 규칙, 엔티티 | `lib/domain/` |
+| **Data** | 외부 접근 (Claude API, SQLite) | `lib/data/` |
 
 ## 디렉토리 구조
 
 ```
 workout_ai/
-├── app/                          # Expo Router (파일 기반 라우팅)
-│   ├── _layout.tsx               # 루트 레이아웃, 하단 탭 네비게이션
-│   ├── index.tsx                 # 홈 — 오늘의 운동 카드
-│   ├── chat.tsx                  # AI 대화 화면
-│   ├── record.tsx                # 운동 기록 입력
-│   └── history.tsx               # 히스토리 조회
+├── lib/
+│   ├── main.dart                     # 앱 진입점
+│   ├── app.dart                      # MaterialApp, Provider 등록
+│   │
+│   ├── presentation/
+│   │   ├── screens/
+│   │   │   ├── home_screen.dart      # 홈 — 오늘의 운동 카드
+│   │   │   ├── chat_screen.dart      # AI 대화 화면
+│   │   │   ├── record_screen.dart    # 운동 기록 입력
+│   │   │   └── history_screen.dart   # 히스토리 조회
+│   │   └── widgets/
+│   │       ├── chat_bubble.dart      # 말풍선
+│   │       ├── workout_card.dart     # 루틴 카드
+│   │       └── set_input_form.dart   # 세트/무게/횟수 입력
+│   │
+│   ├── application/
+│   │   ├── chat_provider.dart        # 채팅 상태, API 호출 트리거
+│   │   └── workout_provider.dart     # 운동 기록 상태, DB 연동
+│   │
+│   ├── domain/
+│   │   ├── entities/
+│   │   │   ├── workout_session.dart  # 운동 세션 모델
+│   │   │   ├── exercise_set.dart     # 세트 기록 모델
+│   │   │   └── chat_message.dart     # 채팅 메시지 모델
+│   │   └── services/
+│   │       ├── ai_coach_service.dart # Claude API 프롬프트 구성
+│   │       └── workout_service.dart  # 운동 CRUD 로직
+│   │
+│   └── data/
+│       ├── api/
+│       │   └── claude_api_client.dart  # http 기반 Claude API 호출
+│       └── local/
+│           └── database.dart           # sqflite 초기화, 스키마, CRUD
 │
-├── components/                   # 재사용 컴포넌트
-│   ├── ChatBubble.tsx            # 말풍선
-│   ├── WorkoutCard.tsx           # 루틴 카드
-│   └── SetInputForm.tsx          # 세트/무게/횟수 입력
-│
-├── store/                        # Zustand 상태
-│   ├── chatStore.ts              # 채팅 메시지, 로딩 상태
-│   └── workoutStore.ts           # 운동 기록, 히스토리
-│
-├── services/                     # 비즈니스 로직
-│   ├── aiCoachService.ts         # Claude API 프롬프트 구성, 응답 파싱
-│   └── workoutService.ts         # 운동 기록 CRUD 로직
-│
-├── data/
-│   ├── api/
-│   │   └── claudeApiClient.ts    # fetch 기반 Claude API 호출
-│   └── local/
-│       └── database.ts           # expo-sqlite 초기화, 스키마, CRUD
-│
-├── domain/
-│   └── entities/
-│       ├── WorkoutSession.ts     # 운동 세션 타입
-│       ├── ExerciseSet.ts        # 세트 기록 타입
-│       └── Exercise.ts           # 종목 타입
-│
-├── .env                          # EXPO_PUBLIC_CLAUDE_API_KEY (gitignore)
-├── .env.example                  # 키 없는 예시 파일
-├── app.json                      # Expo 설정
-└── package.json
+├── assets/                           # 이미지, 아이콘
+├── .env                              # CLAUDE_API_KEY (gitignore)
+├── .env.example
+├── pubspec.yaml                      # Flutter 의존성
+└── android/                          # Android 빌드 설정
 ```
 
 ## 주요 데이터 흐름
 
 ### 1. AI 운동 계획 요청
 ```
-chat.tsx (사용자 입력)
-  → chatStore.sendMessage()
-  → aiCoachService.getWorkoutPlan(message, history)
-  → claudeApiClient.call(prompt)
+ChatScreen (사용자 입력)
+  → ChatProvider.sendMessage()
+  → AiCoachService.getWorkoutPlan(messages, history)
+  → ClaudeApiClient.call(prompt)
   → Claude API 응답
-  → chatStore.messages 업데이트
-  → chat.tsx (말풍선 렌더링)
+  → ChatProvider.messages 업데이트
+  → ChatScreen (말풍선 렌더링)
 ```
 
 ### 2. 운동 기록 저장
 ```
-record.tsx (세트/무게/횟수 입력)
-  → workoutStore.saveSet()
-  → workoutService.saveExerciseSet(set)
+RecordScreen (세트/무게/횟수 입력)
+  → WorkoutProvider.saveSet()
+  → WorkoutService.saveExerciseSet(set)
   → database.insertSet(set)
   → SQLite 저장 완료
 ```
@@ -108,10 +110,8 @@ record.tsx (세트/무게/횟수 입력)
 
 | 항목 | 선택 | 이유 (ADR) |
 |---|---|---|
-| 프레임워크 | React Native (Expo) | ADR-0001 |
-| 언어 | TypeScript | 타입 안전, AI 생성 코드 디버깅 유리 |
-| 라우팅 | Expo Router | Expo 기본 제공, 파일 기반 직관적 |
-| 상태관리 | Zustand | ADR-0003 |
-| 로컬 저장소 | expo-sqlite | ADR-0002 |
+| 프레임워크 | Flutter 3.44.0 (Dart) | ADR-0001 |
+| 상태관리 | Provider | ADR-0003 |
+| 로컬 저장소 | sqflite | ADR-0002 |
 | AI | Claude API (claude-haiku-4-5) | 비용 효율 |
-| HTTP | fetch (내장) | 별도 패키지 불필요 |
+| HTTP | http 패키지 | Flutter 표준 |

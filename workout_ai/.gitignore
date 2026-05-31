@@ -1,41 +1,31 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
 
-# dependencies
-node_modules/
+# Android
+**/android/local.properties
+**/android/.gradle
+**/android/captures/
+**/android/key.properties
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+# iOS
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/Pods/
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+# IDE
+.idea/
+*.log
+.vscode/settings.json
 
 # macOS
 .DS_Store
-*.pem
 
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-# generated native folders
-/ios
-/android
+# 환경변수 (API 키)
+.env
+lib/config/secrets.dart

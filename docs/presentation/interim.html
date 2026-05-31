@@ -192,7 +192,7 @@
 <div class="slide title active">
   <h1>workout_ai</h1>
   <p class="tagline">AI 퍼스널 트레이너를 주머니에</p>
-  <p class="sub">원동현 &nbsp;·&nbsp; React Native (Expo) + Claude API</p>
+  <p class="sub">원동현 &nbsp;·&nbsp; Flutter (Dart) + Claude API</p>
   <div>
     <span class="pill">앱프로그래밍 2026 &nbsp;·&nbsp; 중간 발표</span>
   </div>
@@ -234,11 +234,11 @@
   <div class="arch-grid">
     <div class="mermaid">
 flowchart TD
-  UI["화면\n(Expo Router)"]
-  ST["상태\n(Zustand)"]
+  UI["화면\n(Flutter Widget)"]
+  ST["상태\n(Provider)"]
   SV["서비스\n(aiCoach · workout)"]
   API["Claude API\n(Haiku)"]
-  DB["SQLite\n(expo-sqlite)"]
+  DB["SQLite\n(sqflite)"]
 
   UI --> ST
   ST --> SV
@@ -250,15 +250,16 @@ flowchart TD
   style SV  fill:#064e3b,color:#a7f3d0,stroke:#10b981,stroke-width:2px
   style API fill:#7f1d1d,color:#fecaca,stroke:#ef4444,stroke-width:2px
   style DB  fill:#713f12,color:#fef08a,stroke:#eab308,stroke-width:2px
+
     </div>
     <table>
       <thead>
         <tr><th>기술</th><th>선택 이유</th></tr>
       </thead>
       <tbody>
-        <tr><td>React Native (Expo)</td><td>QR 즉시 실행, 빠른 프로토타입</td></tr>
-        <tr><td>Zustand</td><td>경량 상태관리, AI 코드 이해 쉬움</td></tr>
-        <tr><td>expo-sqlite</td><td>오프라인 기록 저장, 별도 서버 불필요</td></tr>
+        <tr><td>Flutter (Dart)</td><td>의존성 충돌 없음, 즉시 빌드 (ADR-0001)</td></tr>
+        <tr><td>Provider</td><td>Flutter 공식 권장, 경량 상태관리 (ADR-0003)</td></tr>
+        <tr><td>sqflite</td><td>오프라인 기록 저장, 별도 서버 불필요 (ADR-0002)</td></tr>
         <tr><td>Claude Haiku</td><td>저비용 대화형 운동 코칭 최적</td></tr>
       </tbody>
     </table>

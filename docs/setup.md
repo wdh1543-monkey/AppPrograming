@@ -1,38 +1,27 @@
 # Setup — workout_ai
 
 > 새 사람이 이 문서만 보고 5분 안에 실행할 수 있도록 작성.
-> 작성: AI Agent 자동 생성 / 본인 검토 완료 (2026-05-18)
+> 프레임워크: Flutter (Dart) — 2026-06-01 기준
 
 ## 1. 사전 요구
 
 | 도구 | 버전 | 확인 명령 |
 |---|---|---|
-| Node.js | 18.x 이상 | `node -v` |
-| npm | 9.x 이상 | `npm -v` |
+| Flutter SDK | 3.x 이상 | `flutter --version` |
+| Android Studio | 최신 | Android SDK 포함 |
 | Git | 2.40+ | `git --version` |
-| Expo Go (앱) | 최신 | 실물 기기에 설치 |
+| Android 기기 or 에뮬레이터 | — | `flutter devices` |
 
-### Node.js 설치
+### Flutter 설치 (Windows)
 
-#### 윈도우
 ```powershell
-winget install OpenJS.NodeJS
-```
-
-#### macOS
-```bash
-brew install node
-```
-
-#### 리눅스 (Ubuntu)
-```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-설치 확인:
-```bash
-npx expo doctor
+# 1. Flutter SDK 다운로드 후 C:\flutter 에 압축 해제
+# 2. 환경변수 PATH 추가
+[System.Environment]::SetEnvironmentVariable(
+  "Path", $env:Path + ";C:\flutter\bin", "User"
+)
+# 3. 터미널 재시작 후 확인
+flutter doctor
 ```
 
 ---
@@ -49,75 +38,82 @@ cd AppPrograming/workout_ai
 ## 3. 의존성 설치
 
 ```bash
-npm install
+flutter pub get
 ```
 
 ---
 
-## 4. 환경 변수 설정 (API 키)
+## 4. 환경변수 설정 (API 키)
 
-`.env.example`을 복사해서 `.env` 파일 생성:
+`.env.example` 복사:
 
-#### 윈도우
+#### Windows
 ```powershell
 copy .env.example .env
 ```
 
-#### macOS / 리눅스
+#### macOS / Linux
 ```bash
 cp .env.example .env
 ```
 
-`.env` 파일을 열어 API 키 입력:
+`.env` 파일 열어 API 키 입력:
 ```
-EXPO_PUBLIC_CLAUDE_API_KEY=your_api_key_here
+CLAUDE_API_KEY=your_api_key_here
 ```
 
 **API 키 발급**: [console.anthropic.com](https://console.anthropic.com) → API Keys → Create Key
-
-> `EXPO_PUBLIC_` 접두사를 붙여야 Expo가 클라이언트에서 읽을 수 있습니다.
-> `.env`는 `.gitignore`에 등록되어 있어 절대 커밋되지 않습니다.
 
 ---
 
 ## 5. 실행
 
 ```bash
-npx expo start
+# 연결된 기기 확인
+flutter devices
+
+# 앱 실행 (기기 자동 선택)
+flutter run
+
+# 특정 기기 지정
+flutter run -d <device-id>
 ```
 
-터미널에 QR 코드가 표시됩니다.
+**Android 에뮬레이터 실행**:
+1. Android Studio → Device Manager → 에뮬레이터 시작
+2. `flutter run` 실행
 
 **실물 기기 실행**:
-1. 실물 기기에 **Expo Go** 앱 설치 (App Store / Google Play)
-2. 같은 Wi-Fi 네트워크 연결
-3. Expo Go 앱으로 QR 코드 스캔
-
-**에뮬레이터 실행** (설치된 경우):
-- Android: 터미널에서 `a` 키 입력
-- iOS: 터미널에서 `i` 키 입력 (macOS만)
-
-성공 시: workout_ai 앱 홈 화면이 실물 기기에 표시됩니다.
+1. 기기에서 개발자 모드 활성화 → USB 디버깅 ON
+2. USB 연결 후 `flutter devices` 로 기기 확인
+3. `flutter run`
 
 ---
 
 ## 6. 자주 묻는 문제
 
-### Q1. `npx expo start` 후 QR 코드가 스캔되지 않아요
-기기와 PC가 **같은 Wi-Fi**에 연결되어 있는지 확인. 다른 네트워크면 터미널에서 `t` 키를 눌러 터널 모드로 전환
-
-### Q2. `npm install` 중 오류가 나요
+### Q1. `flutter doctor` 에서 Android 라이선스 경고
 ```bash
-npm install --legacy-peer-deps
+flutter doctor --android-licenses
+# 모두 y 입력
 ```
-로 재시도
 
-### Q3. API 키가 `undefined`로 나와요
-`.env` 파일이 프로젝트 루트(package.json과 같은 위치)에 있는지 확인.
-변수명이 `EXPO_PUBLIC_` 으로 시작하는지 확인 후 `npx expo start` 재시작
+### Q2. `flutter run` 시 기기가 안 잡혀요
+USB 디버깅이 켜져 있는지 확인. USB 케이블이 데이터 전송 지원 케이블인지 확인.
 
-### Q4. Expo Go에서 "Something went wrong" 오류
-터미널 로그를 확인하고 오류 메시지를 검색. 대부분 패키지 버전 충돌 — `npm install` 재실행
+### Q3. `flutter pub get` 오류
+```bash
+flutter clean
+flutter pub get
+```
 
-### Q5. 핫 리로드가 안 돼요
-Expo Go 앱에서 화면을 세 손가락으로 흔들어 개발자 메뉴 → Reload
+### Q4. API 키가 null로 나와요
+`.env` 파일이 `pubspec.yaml`과 같은 위치에 있는지 확인.
+`flutter run` 재시작.
+
+### Q5. 빌드가 갑자기 느려요
+```bash
+flutter clean
+flutter pub get
+flutter run
+```
