@@ -41,7 +41,7 @@
 
 ### 4.1 로컬 저장소 (SQLite)
 - 4.1.1 스키마 설계 (운동 세션, 세트, 종목 테이블) (1d)
-- 4.1.2 CRUD 구현 (expo-sqlite) (2d)
+- 4.1.2 CRUD 구현 (sqflite — Flutter, ADR-0002) (2d)
 
 ### 4.2 AI 컨텍스트 관리
 - 4.2.1 최근 N회 히스토리 요약 로직 (2d)
@@ -49,8 +49,8 @@
 ## 5. 운영
 
 ### 5.1 빌드 / 배포
-- 5.1.1 React Native (Expo) 프로젝트 초기 세팅 (1d)
-- 5.1.2 Expo Go로 실물 기기 테스트 / EAS Build APK (1d)
+- 5.1.1 Flutter 프로젝트 초기 세팅 (1d) ← React Native→Flutter 전환 (ADR-0001)
+- 5.1.2 flutter build apk --release · adb install 실기기 배포 (1d)
 
 ### 5.2 문서 및 발표
 - 5.2.1 docs/ 문서 완비 (setup, deploy, testing) (2d)

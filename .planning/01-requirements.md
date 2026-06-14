@@ -1,6 +1,7 @@
 # 요구사항 (MoSCoW)
 
 > 작성: AI Agent 자동 생성 / 본인 검토 완료 (2026-05-18)
+> 업데이트: Flutter 전환 반영 (2026-06-01)
 
 ## 사용자 시나리오
 
@@ -22,12 +23,12 @@
 
 ## Must — 없으면 데모 불가
 
-- [ ] AI 텍스트 대화 인터페이스 (채팅 UI)
-- [ ] Claude API 연동 (운동 컨텍스트 포함 프롬프트)
-- [ ] 운동 기록 입력 (종목 / 세트 / 무게 / 횟수)
-- [ ] 로컬 저장소 (SQLite — 기록 CRUD)
-- [ ] 운동 히스토리 조회 (날짜별 목록)
-- [ ] AI가 히스토리를 참조해 계획 생성
+- [x] AI 텍스트 대화 인터페이스 (채팅 UI) — `lib/presentation/screens/chat_screen.dart`
+- [x] Claude API 연동 (운동 컨텍스트 포함 프롬프트) — `lib/data/api/claude_api_client.dart`
+- [x] 운동 기록 입력 (종목 / 세트 / 무게 / 횟수) — `lib/presentation/screens/record_screen.dart`
+- [x] 로컬 저장소 (sqflite SQLite — 기록 CRUD) — `lib/data/local/database.dart`
+- [x] 운동 히스토리 조회 (날짜별 목록) — `lib/presentation/screens/history_screen.dart`
+- [x] AI가 히스토리를 참조해 계획 생성 — `lib/domain/services/ai_coach_service.dart`
 
 ## Should — 있어야 정상이지만 데모는 Must로 가능
 

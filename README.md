@@ -8,21 +8,23 @@
 
 | 기술 | 선택 |
 |---|---|
-| 프레임워크 | React Native (Expo) |
-| 언어 | TypeScript |
-| 상태관리 | Zustand |
-| 로컬 저장소 | expo-sqlite |
+| 프레임워크 | Flutter 3.x (Dart) |
+| 상태관리 | Provider (ChangeNotifier) |
+| 로컬 저장소 | sqflite (SQLite) |
 | AI | Claude API (claude-haiku-4-5) |
+| HTTP | http 패키지 |
+
+> **참고:** 초기 설계는 React Native (Expo)였으나 11주차 npm 의존성 충돌로 Flutter로 전환 (ADR-0001)
 
 ## 빌드 및 실행
 
 ```bash
 git clone https://github.com/wdh1543-monkey/AppPrograming.git
 cd AppPrograming/workout_ai
-npm install
-cp .env.example .env   # Windows: copy .env.example .env
-# .env 에 EXPO_PUBLIC_CLAUDE_API_KEY 입력
-npx expo start
+flutter pub get
+copy .env.example .env   # macOS/Linux: cp .env.example .env
+# .env 에 CLAUDE_API_KEY 입력
+flutter run
 ```
 
 자세한 설정은 [docs/setup.md](docs/setup.md) 참고.
@@ -38,3 +40,6 @@ npx expo start
 - [WBS 진행 현황](https://wdh1543-monkey.github.io/AppPrograming/)
 - [아키텍처 문서](docs/architecture.md)
 - [Setup 가이드](docs/setup.md)
+- [빌드 및 배포](docs/deploy.md)
+- [테스트](docs/testing.md)
+- [ADR 목록](.planning/decisions/)
